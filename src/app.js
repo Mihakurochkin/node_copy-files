@@ -3,15 +3,9 @@
 
 const fs = require('fs');
 const path = require('path');
-const [sourcePath, destinationPath] = process.argv.slice(2);
+const args = process.argv.slice(2);
 
 function copyFile(source, destination) {
-  if (arguments.length !== 2 || !source || !destination) {
-    console.error('Invalid number of arguments');
-
-    return;
-  }
-
   try {
     if (!fs.existsSync(source)) {
       console.error('Source file does not exist');
@@ -51,6 +45,14 @@ function copyFile(source, destination) {
   }
 }
 
-copyFile(sourcePath, destinationPath);
+if (args.some((a) => a.startsWith('--') || a.startsWith('-'))) {
+  console.error('Error: flags/options are not supported');
+} else if (args.length !== 2 || args.some((a) => typeof a !== 'string')) {
+  console.error(
+    'Error: exactly two correct positional arguments are required.',
+  );
+} else {
+  copyFile(args[0], args[1]);
+}
 
 module.exports = { copyFile };
